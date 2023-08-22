@@ -5,7 +5,7 @@ import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue';
 
 // src/router/index.js
-import store from '../store/index.js';
+// import store from '../store/index.js';
 
 
 
@@ -44,7 +44,13 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!store.getters.isAuthenticated) {
+//     if (!store.getters.isAuthenticated) {
+//       next('/login');
+//     } else {
+//       next();
+//     }
+    const token = localStorage.getItem('token');
+    if (!token) {
       next('/login');
     } else {
       next();
