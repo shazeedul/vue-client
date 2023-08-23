@@ -1,8 +1,8 @@
 <template>
     <div>
         <h1>Dashboard</h1>
-        <p v-if="user">Welcome, {{ user.name }}</p>
-        <p v-else>You are not logged in.</p>
+        <p v-if="userLoaded && user">Welcome, {{ user.name }}</p>
+        <p v-else>Loading user data...</p>
     </div>
 </template>
 
@@ -12,19 +12,27 @@ import axios from 'axios';
 
 export default {
     name: "Dashboard-Component",
-    computed: {
-        // ...mapGetters(["user"])
-        // get userInformation from localStorage
-        user() {
-            // get userInformation from axios
-            return axios.get(import.meta.env.VITE_BACKEND_URL+"/me", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    dataType: "json"
-                }
-            });
-
-            // return JSON.parse(localStorage.getItem("user"));
+    data() {
+        return {
+        user: null,
+        userLoaded: false
+        };
+    },
+    async created() {
+        try {
+        const response = await axios.get(
+            import.meta.env.VITE_BACKEND_URL + "/me",
+            {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                dataType: "json"
+            }
+            }
+        );
+        this.user = response.data; // Assuming the user data is in the response's data property
+        this.userLoaded = true;
+        } catch (error) {
+        console.error("Error fetching user data:", error);
         }
     }
 };

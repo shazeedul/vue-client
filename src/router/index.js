@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue';
@@ -14,9 +13,12 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      name: 'dashboard',
       path: '/',
-      name: 'home',
-      component: HomeView
+      component: Dashboard,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/about',
@@ -31,14 +33,6 @@ const router = createRouter({
       path: '/register',
       component: Register
     },
-    {
-      name: 'dashboard',
-      path: '/dashboard',
-      component: Dashboard,
-      meta: {
-        requiresAuth: true
-      }
-    }
   ]
 });
 
