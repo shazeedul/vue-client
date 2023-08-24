@@ -12,28 +12,28 @@
 </template>
 
 <script>
-import { login } from '../services/authService.js'
+import { mapActions } from 'vuex';
+
 export default {
-  name: 'Login-Component',
+  methods: {
+    ...mapActions(['performLogin']), // Map the login action from Vuex
+    async loginForm() {
+      try {
+        await this.performLogin({ email: this.email, password: this.password });
+        
+        // Redirect to home page after successful login
+        this.$router.push('/');
+      } catch (error) {
+        console.error('Login error:', error);
+      }
+    },
+  },
   data() {
     return {
       email: '',
-      password: ''
-    }
+      password: '',
+    };
   },
-  methods: {
-    async loginForm() {
-      try {
-        const data = await login(this.email, this.password)
-        // setItem in localStorage
-        localStorage.setItem('user', JSON.stringify(data.user))
-        // setItem for token
-        localStorage.setItem('token', data.token)
-        this.$router.push('/')
-      } catch (error) {
-        console.error('Login error:', error)
-      }
-    }
-  }
-}
+};
 </script>
+

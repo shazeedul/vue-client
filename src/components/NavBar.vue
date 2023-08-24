@@ -18,10 +18,10 @@ import { RouterLink } from 'vue-router';
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ms-auto">
-                <!-- <RouterLink class="nav-link" to="/profile">Profile</RouterLink> -->
-            <RouterLink class="nav-link" to="/login">Login</RouterLink>
-            <RouterLink class="nav-link" to="/register">Register</RouterLink>
-            <button class="nav-link" @click="logout">Logout</button>
+            <!-- <RouterLink class="nav-link" to="/profile">Profile</RouterLink> -->
+            <RouterLink v-if="!isAuthenticated" class="nav-link" to="/login">Login</RouterLink>
+            <RouterLink v-if="!isAuthenticated" class="nav-link" to="/register">Register</RouterLink>
+            <button v-if="isAuthenticated" class="nav-link" @click="logout">Logout</button>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -29,15 +29,19 @@ import { RouterLink } from 'vue-router';
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
-    name: 'NavBar-Component',
-    methods: {
-        logout() {
-            localStorage.removeItem('user')
-            localStorage.removeItem('token')
-            this.$router.push('/login')
-        },
+  computed: {
+    ...mapGetters(['isAuthenticated']), // Map the isAuthenticated getter
+  },
+  methods: {
+    ...mapActions(['performLogout']), // Map the logout action
+    logout() {
+      this.performLogout(); // Dispatch the Vuex logout action
+      this.$router.push('/login'); // Redirect to login page after logout
     },
-}
+  },
+};
 </script>
 

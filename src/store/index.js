@@ -1,30 +1,45 @@
 import { createStore } from 'vuex';
+import { login } from '../services/authService.js'; // Import your login service
 
 export default createStore({
   state: {
-    token: null,
-    user: null,
+    token: localStorage.getItem('token') || null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
   },
   mutations: {
     setToken(state, token) {
       state.token = token;
+      localStorage.setItem('token', token);
     },
     setUser(state, user) {
       state.user = user;
-    }
+      localStorage.setItem('user', JSON.stringify(user));
+    },
+    clearState(state) {
+      state.token = null;
+      state.user = null;
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    },
   },
   actions: {
-    performLogin({ commit }, data) {
-      commit('setToken', data.token);
-      commit('setUser', data.user);
+    async performLogin({ commit }, { email, password }) {
+      try {
+        const data = await login(email, password);
+        commit('setToken', data.token);
+        commit('setUser', data.user);
+      } catch (error) {
+        console.error('Login error:', error);
+        throw error; // Rethrow the error for the component to handle
+      }
     },
-    logout({ commit }) {
-      commit('setToken', null);
+    performLogout({ commit }) {
+      commit('clearState');
     },
   },
   getters: {
     isAuthenticated: state => !!state.token,
     user: state => state.user,
-
   },
 });
+
