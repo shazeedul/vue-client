@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { login } from '../services/authService.js'; // Import your login service
+import { login, logout, register } from '../services/authService.js'; // Import your login service
 
 export default createStore({
   state: {
@@ -33,7 +33,18 @@ export default createStore({
         throw error; // Rethrow the error for the component to handle
       }
     },
+    async performRegister({ commit }, { username, email, password }) {
+      try {
+        const data = await register(username, email, password);
+        commit('setToken', data.token);
+        commit('setUser', data.user);
+      } catch (error) {
+        console.error('Register error:', error);
+        throw error; // Rethrow the error for the component to handle
+      }
+    },
     performLogout({ commit }) {
+      logout();
       commit('clearState');
     },
   },

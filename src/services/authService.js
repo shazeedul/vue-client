@@ -21,3 +21,27 @@ export async function login(email, password) {
     }
   }
 }
+
+export async function register(username, email, password) {
+  try {
+    const response = await axios.post(`${API_URL}/register`, { name: username, email: email, password: password });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    } else if (error.request) {
+      throw new Error('The server did not respond. Are you sure you have an internet connection?');
+    } else {
+      throw new Error(`Error ${error.message}`);
+    }
+  }
+}
+
+export async function logout() {
+  const response = await axios.post(`${API_URL}/logout`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+  return response.data;
+}
