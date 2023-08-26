@@ -65,7 +65,7 @@ export default {
                 // Redirect to home page after successful login
                 this.$router.push('/');
             } catch(error) {
-            console.error('Login error:', error);
+            console.error('Registration error:', error);
         }
         },
         onReset(event) {

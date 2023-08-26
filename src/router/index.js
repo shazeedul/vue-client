@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue';
+import Form from '../components/Form.vue';
 
 // src/router/index.js
 // import store from '../store/index.js';
@@ -16,6 +17,14 @@ const router = createRouter({
       name: 'dashboard',
       path: '/',
       component: Dashboard,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      name: 'form',
+      path: '/form',
+      component: Form,
       meta: {
         requiresAuth: true
       }

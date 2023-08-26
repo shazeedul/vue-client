@@ -13,6 +13,7 @@ import { RouterLink } from 'vue-router';
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <RouterLink class="nav-link" to="/">Dashboard</RouterLink>
+          <RouterLink class="nav-link" to="/form">Form</RouterLink>
           <RouterLink class="nav-link" to="/about">About</RouterLink>
         </b-navbar-nav>
 
