@@ -11,7 +11,9 @@
                             {{ row.index + 1 }}
                         </template>
                         <template #cell(link)="row">
-                            <a :href="row.item.link" target="_blank">{{ row.item.link }}</a>
+                            <router-link :to="{ name: 'formDetails', params: { link: row.item.link } }" target="_blank">
+                                {{ row.item.link }}
+                            </router-link>
                         </template>
                         <template #cell(description)="row">
                             {{ row.item.description || '--' }}
@@ -56,38 +58,41 @@ export default {
     },
     methods: {
         async fetchForms() {
-            try {
-                const APP_URL = import.meta.env.VITE_BACKEND_URL;
-                const response = await axios.get(`${APP_URL}/forms`, {
+            const APP_URL = import.meta.env.VITE_BACKEND_URL;
+            await axios.get(`${APP_URL}/forms`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        dataType: "json"
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
                     }
+                })
+                .then(response => {
+                    this.forms = response.data.forms;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
                 });
-                this.forms = response.data.forms;
-            } catch (error) {
-                console.error('Error fetching forms:', error);
-            }
         },
         openModal() {
             this.modalVisible = true;
         },
-        async createForm(formData) {
-            // Handle form creation logic for api
-            try {
-                const APP_URL = import.meta.env.VITE_BACKEND_URL;
-                const response = await axios.post(`${APP_URL}/forms`, {
+        createForm(formData) {
+            console.log(formData);
+            const APP_URL = import.meta.env.VITE_BACKEND_URL;
+            axios.post(`${APP_URL}/forms`, formData,
+                {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        dataType: "json"
-                    },
-                    data: formData
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    alert('form data:', response.data.message);
+                    this.modalVisible = false;
+                    this.fetchForms();
+                })
+                .catch(error => {
+                    console.error('Error submitting questions:', error);
                 });
-                console.log(response);
-            } catch(error) {
-                console.error('Error fetching forms:', error);
-            }
-            this.modalVisible = false;
         }
     }
 };

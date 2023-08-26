@@ -3,6 +3,7 @@ import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue';
 import Form from '../components/Form.vue';
+import FormDetails from '../components/FormDetails.vue';
 
 // src/router/index.js
 // import store from '../store/index.js';
@@ -25,6 +26,14 @@ const router = createRouter({
       name: 'form',
       path: '/form',
       component: Form,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      name: 'formDetails',
+      path: '/feedback/:link',
+      component: FormDetails,
       meta: {
         requiresAuth: true
       }
