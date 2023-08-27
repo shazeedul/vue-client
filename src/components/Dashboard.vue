@@ -6,7 +6,7 @@
                 <p v-if="userLoaded && user">Welcome, {{ user.name }}</p>
                 <p v-else>Loading user data...</p>
                 <b-card>
-                    <b-table striped hover :items="forms" :fields="fields">
+                    <b-table striped hover :items="forms" :fields="fields" class="text-center">
                         <template #cell(id)="row">
                             {{ row.index + 1 }}
                         </template>

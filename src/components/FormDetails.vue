@@ -52,7 +52,7 @@ export default {
         const link = this.$route.params.link;
         const APP_URL = import.meta.env.VITE_BACKEND_URL;
         // fetch form details
-        axios.get(`${APP_URL}/forms/${link}`, {
+        axios.get(`${APP_URL}/forms/${link}/show`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ export default {
             .then(response => {
                 console.log('form data:', response.data);
                 this.formData = response.data.data;
-                axios.get(`${APP_URL}/forms/${link}/answers`, {
+                axios.get(`${APP_URL}/forms/${link}/user-answers`, {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem('token')}`,
                             'Content-Type': 'application/json'
