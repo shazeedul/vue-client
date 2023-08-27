@@ -6,6 +6,7 @@
                 <p v-if="userLoaded && user">Welcome, {{ user.name }}</p>
                 <p v-else>Loading user data...</p>
                 <b-card>
+                    <h3>All Forms</h3>
                     <b-table striped hover :items="forms" :fields="fields" class="text-center">
                         <template #cell(id)="row">
                             {{ row.index + 1 }}
@@ -78,10 +79,9 @@ export default {
                     dataType: "json"
                 }
             });
-            this.user = response.data.user; // Assuming the user data is in the response's data property
+            this.user = response.data.user;
             this.userLoaded = true;
         } catch (error) {
-            // if token invalid then
             this.performLogout();
         }
         this.fetchForms();

@@ -14,12 +14,21 @@
                             {{ row.item.description || '--' }}
                         </template>
                         <template #cell(actions)="row">
-                            <b-button size="sm" variant="primary" class="mx-2">Collections</b-button>
-                            <b-button size="sm" variant="primary" class="mx-2" @click="openEditModal(row.item)">Edit</b-button>
-                            <b-button size="sm" variant="danger" @click="deleteForm(row.item.id)">Delete</b-button>
+                            <router-link :to="{ name: 'formCollection', params: { link: row.item.link } }"><b-button size="sm" variant="primary" class="mx-2">Collections</b-button></router-link>
+                            <b-button size="sm" variant="danger" class="mx-2" @click="deleteForm(row.item.id)">Delete</b-button>
+                            <b-button size="sm" variant="warning" class="mx-2" @click="copyLink(row.item.link)">Copy Link</b-button>
                         </template>
                     </b-table>
-                    <FormCreationModal :show-modal="modalVisible" @update:show-modal="modalVisible = $event" @create-form="createForm" />
+                    <FormCreationModal 
+                        :show-modal="modalVisible"
+                        @update:show-modal="modalVisible = $event"
+                        @create-form="createForm"
+                    />
+                    <FormUpdatingModal
+                        :show-modal="editModalVisible"
+                        @update:show-modal="editModalVisible = $event"
+                        :edit-form-data="updateForm"
+                    />
                 </b-card>
             </div>
         </div>
@@ -30,17 +39,19 @@
 import { BCard, BTable } from 'bootstrap-vue';
 import FormCreationModal from './FormCreationModal.vue';
 import axios from 'axios';
+import { RouterLink } from 'vue-router';
 
 export default {
     name: "FormComponent",
     components: {
         BCard,
         BTable,
-        FormCreationModal
+        FormCreationModal,
+        RouterLink,
     },
     data() {
         return {
-            forms: [], // Your forms data from API response
+            forms: [],
             fields: [
                 { key: 'id', label: 'ID' },
                 { key: 'name', label: 'Name' },
@@ -50,11 +61,10 @@ export default {
                 { key: 'updated_at', label: 'Updated At' },
                 { key: 'actions', label: 'Actions', sortable: false }
             ],
-            modalVisible: false
+            modalVisible: false,
         };
     },
     created() {
-        // Fetch data from the API endpoint
         this.fetchForms();
     },
     methods: {
@@ -68,7 +78,6 @@ export default {
                 })
                 .then(response => {
                     this.forms = response.data.forms;
-                    console.log(response.data.forms);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -95,25 +104,6 @@ export default {
                     console.error('Error submitting questions:', error);
                 });
         },
-        updateForm(formId, editFormData) {
-            const APP_URL = import.meta.env.VITE_BACKEND_URL;
-            console.log(editFormData);
-            axios.put(`${APP_URL}/forms/${formId}`, JSON.stringify(editFormData),
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    alert('form data: '+response.data.message);
-                    this.editModalVisible = false;
-                    this.fetchForms();
-                })
-                .catch(error => {
-                    console.error('Error submitting questions:', error);
-                });
-        },
         deleteForm(id) {
             const APP_URL = import.meta.env.VITE_BACKEND_URL;
             axios.delete(`${APP_URL}/forms/${id}`,
@@ -129,6 +119,16 @@ export default {
                 })
                 .catch(error => {
                     console.error('Error submitting questions:', error);
+                });
+        },
+        copyLink(link) {
+            const valueToCopy = `${window.location.origin}/feedback/${link}`;
+            navigator.clipboard.writeText(valueToCopy)
+                .then(() => {
+                    alert('Value copied to clipboard: ' + valueToCopy);
+                })
+                .catch(error => {
+                    console.error('Copy to clipboard failed:', error);
                 });
         }
     }

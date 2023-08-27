@@ -4,6 +4,7 @@ import Register from '../components/Register.vue'
 import Dashboard from '../components/Dashboard.vue';
 import Form from '../components/Form.vue';
 import FormDetails from '../components/FormDetails.vue';
+import FormCollection from '../components/FormCollection.vue';
 
 // src/router/index.js
 // import store from '../store/index.js';
@@ -39,9 +40,12 @@ const router = createRouter({
       }
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue')
+      name: 'formCollection',
+      path: '/feedback/collection/:link',
+      component: FormCollection,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/login',

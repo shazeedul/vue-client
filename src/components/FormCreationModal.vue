@@ -23,7 +23,9 @@
 
 <script>
 export default {
-    props: ['showModal'],
+    props: {
+        showModal: Boolean,
+    },
     data() {
         return {
             form: {
@@ -39,7 +41,6 @@ export default {
         },
         submitForm(event) {
             event.preventDefault();
-            // Emit an event to parent component with the form data
             this.$emit('create-form', this.form);
             this.closeModal();
             this.formReset();
