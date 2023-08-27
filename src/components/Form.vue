@@ -10,11 +10,6 @@
                         <template #cell(id)="row">
                             {{ row.index + 1 }}
                         </template>
-                        <template #cell(link)="row">
-                            <router-link :to="{ name: 'formDetails', params: { link: row.item.link } }" target="_blank">
-                                {{ row.item.link }}
-                            </router-link>
-                        </template>
                         <template #cell(description)="row">
                             {{ row.item.description || '--' }}
                         </template>

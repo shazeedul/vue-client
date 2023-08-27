@@ -7,15 +7,20 @@
                     <h1>Form Details</h1>
                     <p>Name: {{ formData.name }}</p>
                     <p>Description: {{ formData.description || '--' }}</p>
-
-                    <h2>Questions:</h2>
-                    <form @submit.prevent="submitAnswers">
+                    <b-form @submit.prevent="submitAnswers">
                         <div v-for="question in formData.questions" :key="question.id">
-                            <label>{{ question.question }}</label>
-                            <input v-model="question.answer" type="text" />
+                            <b-form-group class="mb-4">
+                                <b-form-label for="input-1">{{ question.question }}</b-form-label>
+                                <b-form-input
+                                    id="input-1"
+                                    v-model="question.answer"
+                                    type="text"
+                                    placeholder="Enter your answer"
+                                ></b-form-input>
+                            </b-form-group>
                         </div>
-                        <button type="submit">Submit Answers</button>
-                    </form>
+                        <b-button type="submit" variant="primary">Submit</b-button>
+                    </b-form>
                 </div>
                 <div v-else>
                     Loading...
@@ -28,12 +33,20 @@
 
 <script>
 import axios from 'axios';
+import { BForm, BFormGroup, BFormInput, BButton } from 'bootstrap-vue';
+
 
 export default {
     data() {
         return {
-            formData: null
+            formData: null,
         };
+    },
+    components: {
+        BForm,
+        BFormGroup,
+        BFormInput,
+        BButton,
     },
     created() {
         const link = this.$route.params.link;
@@ -48,13 +61,31 @@ export default {
             .then(response => {
                 console.log('form data:', response.data);
                 this.formData = response.data.data;
+                axios.get(`${APP_URL}/forms/${link}/answers`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        console.log('answers:', response.data);
+                        this.formData.questions.forEach(question => {
+                            const answer = response.data.data.find(answer => answer.feedback_question_id === question.id);
+                            if (answer) {
+                                question.answer = answer.answer;
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching answers:', error);
+                    });
             })
             .catch(error => {
                 console.error('Error submitting answers:', error);
             });
     },
     methods: {
-        submitAnswers() {
+        async submitAnswers() {
             const APP_URL = import.meta.env.VITE_BACKEND_URL;
             const answers = this.formData.questions.map(question => {
                 return {
@@ -64,15 +95,19 @@ export default {
             });
 
             const formId = this.formData.id;
-            axios.post(`${APP_URL}/forms/${formId}/submit`, { answers },
+            await axios.post(`${APP_URL}/forms/${formId}/submit`,
+               JSON.stringify(answers),
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                     }
                 })
                 .then(response => {
                     console.log('Answers submitted successfully:', response.data);
+                    alert('Answers submitted successfully');
+                    this.$router.push('/');
                 })
                 .catch(error => {
                     console.error('Error submitting answers:', error);
